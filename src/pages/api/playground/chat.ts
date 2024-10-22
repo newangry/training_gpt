@@ -1,7 +1,6 @@
-import { supabase, supabaseAdmin } from '@/utils/server/supabase-admin';
-import type { NextApiRequest, NextApiResponse } from 'next'
+import { supabaseAdmin } from '@/utils/server/supabase-admin';
 import { createEmbedding } from '@/utils/server/generate-embeddings';
-import { DEFAULT_PROMPT_TEMPLATE, I_DONT_KNOW, SPLIT_TEXT_LENGTH } from '@/utils/server/consts';
+import { DEFAULT_PROMPT_TEMPLATE, SPLIT_TEXT_LENGTH, SYSTEM_PROMPT } from '@/utils/server/consts';
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import { Configuration, OpenAIApi } from 'openai-edge'
 
@@ -29,17 +28,17 @@ export default async function handler(
         match_count: 10,
     });
 
-    console.log(matched_data);
-
     let context = "";
     for (let k = 0; k < matched_data.data.length; k++) {
         context += matched_data.data[k].text
     }
 
     let full_prompt = DEFAULT_PROMPT_TEMPLATE
-        .replace('{{I_DONT_KNOW}}', I_DONT_KNOW)
         .replace('{{CONTEXT}}', context)
         .replace('{{PROMPT}}', query)
+        .replace('{{SYSTEM_PROMPT}}', SYSTEM_PROMPT)
+        
+    console.log(full_prompt);
     const messages = [
         {
             role: 'user',
@@ -61,6 +60,7 @@ export default async function handler(
     })
     return new StreamingTextResponse(stream)
 }
+
 export const config = {
     runtime: 'edge',
 };

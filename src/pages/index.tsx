@@ -11,7 +11,6 @@ import ChatMessage from "@/components/Playground/ChatMessage";
 const Index = () => {
     const [isTrain, setIsTrain] = useState<boolean>(false);
     const [query, setQuery] = useState<string>('');
-    const [isLoad, setIsLoad] = useState<boolean>(false)
     const [files, setFiles] = useState<String[]>([])
     const { messages, append, setMessages, reload, isLoading } = useChat({
         api: '/api/playground/chat', initialInput: 'test',
@@ -22,7 +21,6 @@ const Index = () => {
 
     useEffect(() => {
         getFiles()
-
     }, [])
 
     const handleSend = async () => {
@@ -50,7 +48,6 @@ const Index = () => {
                 body: JSON.stringify(file_content),
             });
             getFiles()
-
         } catch (e) {
             console.log(e);
         }
@@ -137,7 +134,7 @@ const Index = () => {
                         {
                             files.length == 0 ?
                                 <Box>
-                                    No Trained Files
+                                    No Uploaded Files
                                 </Box> :
                                 files.map((item: any, index) =>
                                     <Text key={index}>
@@ -145,7 +142,6 @@ const Index = () => {
                                     </Text>
                                 )
                         }
-
                     </Flex>
                 </Box>
 
